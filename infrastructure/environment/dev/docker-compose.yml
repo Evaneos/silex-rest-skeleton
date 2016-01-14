@@ -12,7 +12,7 @@ nginx:
         - "php:php"
 
 php:
-    image: rest-api-php:5.6
+    image: rest-api-php:5.5
     volumes:
         - ./php/config/php-fpm.conf:/config/php-fpm.conf
         - ./php/config/pool/www.pool:/config/pool/www.pool
