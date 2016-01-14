@@ -17,6 +17,7 @@ php:
         - ./php/config/php-fpm.conf:/config/php-fpm.conf
         - ./php/config/pool/www.pool:/config/pool/www.pool
         - ./php/config/extensions/xdebug-disabled.ini:/etc/php5/mods-available/xdebug.ini
+        - ./php/config/extensions/errors.ini:/etc/php5/fpm/conf.d/errors.ini
         - ./php/config/extensions/blackfire-enabled.ini:/etc/php5/mods-available/blackfire.ini
         - ../../..:/app
     links:
