@@ -3,3 +3,4 @@ composer.lock
 /config/config.yml
 /cache
 .phing_targets
+.idea

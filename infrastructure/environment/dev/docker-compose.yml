@@ -1,0 +1,45 @@
+nginx:
+    image: rest-api-nginx
+    volumes:
+        - ./nginx/config/nginx.conf:/config/nginx.conf
+        - ./nginx/config/fastcgi_params:/config/fastcgi_params
+        - ../../..:/app
+    expose:
+        - "80"
+    ports:
+        - "80"
+    links:
+        - "php:php"
+
+php:
+    image: rest-api-php:5.6
+    volumes:
+        - ./php/config/php-fpm.conf:/config/php-fpm.conf
+        - ./php/config/pool/www.pool:/config/pool/www.pool
+        - ./php/config/extensions/xdebug-disabled.ini:/etc/php5/mods-available/xdebug.ini
+        - ./php/config/extensions/blackfire-enabled.ini:/etc/php5/mods-available/blackfire.ini
+        - ../../..:/app
+    links:
+        - blackfireagent:blackfire
+        - postgres:postgres
+    expose:
+        - "9000"
+
+blackfireagent:
+    image: blackfire/blackfire
+    expose:
+        - 8707
+    env_file:
+        - ./php/config/blackfire-agent.env
+
+
+postgres:
+    image: rest-api-tunnel
+    volumes:
+        - '~/.ssh/id_rsa:/root/.ssh/id_rsa:ro'
+        - '~/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro'
+    expose:
+        - "5432"
+    env_file:
+        - ./tunnel/db.env
+    command : bash -c "while true; do ssh -oStrictHostKeyChecking=no -T -N -L *:5432:localhost:5432 $TUNNEL_PATH; sleep 10; done;"

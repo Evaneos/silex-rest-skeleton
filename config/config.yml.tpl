@@ -5,8 +5,8 @@ config:
     jwt_secret_key: secret
   database:
     driver:   pdo_pgsql
-    dbname:   www
-    host:     192.168.1.231
+    dbname:   common
+    host:     postgres
     user:     postgres
     password: postgres
   log:
