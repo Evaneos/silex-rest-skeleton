@@ -1,0 +1,5 @@
+composer.lock
+/vendor
+/config/config.yml
+/cache
+.phing_targets

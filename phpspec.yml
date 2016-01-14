@@ -1,0 +1,7 @@
+formatter.name: pretty
+suites:
+   bingo:
+       namespace: Evaneos\REST
+       psr4_prefix: Evaneos\REST
+       spec_path: .
+       src_path: app
