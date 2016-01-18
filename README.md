@@ -8,13 +8,15 @@ At the end, when asked, do not delete the project git files, you might need it t
 If you don't want to get updates, you can delete it and ignore the **Setup git** part and to as you want.
 
 After that, you'll have to:
+
 1. Setup git
 ------------
-- In your project, set the origin repository; **$>**`git remote set-url origin git@github.com:<vendor-name>/<project-name>`
-- Still in your project root, launch **$>**`git pull origin master` and resolve conflicts if you have any
-- Then set your upstream by typing this: **$>**`git branch --set-upstream-to origin/master`
-- After that, if you want to update from your repository, just do as usual, and if you want to update the skeleton, just type **$>**`git pull composer master` (you can replace `master` by a tag/branch/etc.)
 
+**$>**`composer git-setup git@github.com:<vendor-name>/<project-name>`
+
+You can see all remote via `git remote -v`
+
+origin target you application repository and upstream the silex skeleton project
 
 2. Setup the env for docker
 ---------------------------
