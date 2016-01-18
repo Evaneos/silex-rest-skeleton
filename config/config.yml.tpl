@@ -1,6 +1,8 @@
 config:
     debug: false
-    security.active: true
+    cache_dir: cache
+    log_dir: log
+    security.enabled: true
     security.jwt_secret_key: secret
     database.driver: pdo_pgsql
     database.dbname: common
@@ -12,3 +14,4 @@ config:
     log.name: APP
     api.max_pagination_limit: 50
     api.default_pagination_limit: 20
+

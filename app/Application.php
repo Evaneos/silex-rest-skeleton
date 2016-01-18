@@ -96,7 +96,7 @@ class Application extends SilexApplication
         $app = $this;
         
         // Security
-        if ($app['config']['security.active']) {
+        if ($app['config']['security.enabled']) {
             $app['security.firewalls'] = [
                 'all' => [
                     'stateless' => true,
