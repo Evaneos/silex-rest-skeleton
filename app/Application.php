@@ -7,6 +7,7 @@ use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 use Silex\Provider\MonologServiceProvider;
@@ -46,11 +47,13 @@ class Application extends SilexApplication
         $app['cache_dir'] = $this->rootDir.'/'.$app['config']['cache_dir'];
         $app['log_dir'] = $this->rootDir.'/'.$app['config']['log_dir'];
         $app['debug'] = $app['config']['debug'];
+        $app['env'] = $app['config']['env'];
 
         // keep all in one place to avoid confusion
         $config = $app['config'];
         unset($config['cache_dir']);
         unset($config['log_dir']);
+        unset($config['env']);
         unset($config['debug']);
         $app['config'] = $config;
 
@@ -89,9 +92,14 @@ class Application extends SilexApplication
                 'mappings' => [] // add your mappings
             ]
         ]);
-        
+
         // Domain services
         $app->addDomainServices();
+
+        //Be sure to override keys
+        foreach ($values as $key => $value) {
+            $this[$key] = $value;
+        }
     }
     
     public function bootHttpApi()
@@ -155,8 +163,10 @@ class Application extends SilexApplication
         $app->boot();
         
         $application = new \Symfony\Component\Console\Application();
-        
+        $application->setDispatcher($app['dispatcher']);
+        $application->getDefinition()->addOption(new InputOption('env', 'e', InputOption::VALUE_OPTIONAL, 'Define environment', 'dev'));
         $application->add($app['command.default']);
+
         // TODO add your other commands here
         
         $application->run();

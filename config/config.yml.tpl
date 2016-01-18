@@ -1,4 +1,5 @@
 config:
+    env: dev
     debug: true
     cache_dir: cache
     log_dir: log

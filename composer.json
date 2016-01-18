@@ -65,6 +65,7 @@
       "dist-file": "config/config.yml.tpl",
       "parameter-key": "config",
       "env-map": {
+        "env": "SILEX_SKT_ENV",
         "debug": "SILEX_SKT_DEBUG",
         "database.host": "SILEX_SKT_DB_HOST",
         "database.user": "SILEX_SKT_DB_USER",
