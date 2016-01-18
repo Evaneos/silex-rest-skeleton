@@ -48,9 +48,11 @@ class Application extends SilexApplication
         $app['debug'] = $app['config']['debug'];
 
         // keep all in one place to avoid confusion
-        unset($app['config']['cache_dir']);
-        unset($app['config']['log_dir']);
-        unset($app['config']['debug']);
+        $config = $app['config'];
+        unset($config['cache_dir']);
+        unset($config['log_dir']);
+        unset($config['debug']);
+        $app['config'] = $config;
 
         // Logger
         $app->register(new MonologServiceProvider(), array(
@@ -73,9 +75,10 @@ class Application extends SilexApplication
         
         $app->register(new DoctrineServiceProvider(), [
             'db.options' => [
+                'driver' => $app['config']['database.driver'],
                 'host' => $app['config']['database.host'],
                 'dbname' => $app['config']['database.dbname'],
-                'username' => $app['config']['database.username'],
+                'user' => $app['config']['database.user'],
                 'password' => $app['config']['database.password']
             ]
         ]);
