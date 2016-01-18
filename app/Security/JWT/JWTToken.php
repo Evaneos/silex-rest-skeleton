@@ -3,10 +3,10 @@
 namespace Evaneos\REST\Security\JWT;
 
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class JWTToken extends AbstractToken
 {
+    /** @var string */
     private $token;
 
     /**

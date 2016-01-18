@@ -24,7 +24,8 @@
     "hautelook/templated-uri-router": "^2.0",
     "symfony/validator": "^2.1",
     "igorw/config-service-provider": "^1.2",
-    "monolog/monolog": "^1.17"
+    "monolog/monolog": "^1.17",
+    "incenteev/composer-parameter-handler": "~2.0"
   },
   "require-dev": {
     "behat/behat": "^3.0",
@@ -48,9 +49,31 @@
     }
   },
   "scripts": {
+    "post-install-cmd": [
+      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
+    ],
+    "post-update-cmd": [
+      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
+    ],
     "test": "vendor/bin/behat",
     "cs": "vendor/bin/php-cs-fixer fix",
-    "cs-test": "vendor/bin/php-cs-fixer fix --dry-run --diff",
-    "git-setup": "bin/git.sh"
+    "cs-test": "vendor/bin/php-cs-fixer fix --dry-run --diff"
+  },
+  "extra": {
+    "incenteev-parameters": {
+      "file": "config/config.yml",
+      "dist-file": "config/config.yml.tpl",
+      "parameter-key": "config",
+      "env-map": {
+        "env": "SILEX_SKT_ENV",
+        "debug": "SILEX_SKT_DEBUG",
+        "database.host": "SILEX_SKT_DB_HOST",
+        "database.user": "SILEX_SKT_DB_USER",
+        "database.password": "SILEX_SKT_DB_PASSWORD",
+        "database.dbname": "SILEX_SKT_DB_NAME",
+        "cache_dir": "SILEX_SKT_CACHE_DIR",
+        "log_dir": "SILEX_SKT_LOG_DIR"
+      }
+    }
   }
 }

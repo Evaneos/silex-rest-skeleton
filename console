@@ -1,6 +1,16 @@
 #!/usr/bin/env php
 <?php
+use Symfony\Component\Console\Input\ArgvInput;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-$app = new Evaneos\REST\Application();
+$input = new ArgvInput();
+$env = $input->getParameterOption(['--env', '-e'], getenv('SILEX_SKT_ENV') ?: 'dev');
+$debug = getenv('SILEX_SKT_DEBUG') !== '0' && !$input->hasParameterOption(['--no-debug', '']) && $env !== 'prod';
+
+$app = new Evaneos\REST\Application([
+    'debug' => $debug,
+    'env' => $env
+]);
+
 $app->bootCLI();

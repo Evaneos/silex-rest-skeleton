@@ -1,14 +1,15 @@
 <?php
 namespace Evaneos\REST;
 
-use Symfony\Component\Validator\Mapping\ClassMetadataFactory;
+use Doctrine\Common\Cache\ApcuCache;
 use Silex\Application as SilexApplication;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
-use Doctrine\Common\Cache\ApcCache;
 use Silex\Provider\MonologServiceProvider;
 use Igorw\Silex\ConfigServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
@@ -19,7 +20,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Evaneos\REST\API\ControllerProviders\ApiControllerProvider;
 use Evaneos\REST\API\Exceptions\BadRequestException;
-use Evaneos\REST\API\Converters\ApiResponseBuilder;
 use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Whoops\Provider\Silex\WhoopsServiceProvider;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,17 +39,28 @@ class Application extends SilexApplication
         parent::__construct($values);
         
         $this->rootDir = __DIR__.'/..';
-        
         $app = $this;
-        
+        $app['root_dir'] = $this->rootDir;
+
         $app->register(new ConfigServiceProvider($this->rootDir . '/config/config.yml'));
-        
+
+        $app['cache_dir'] = $this->rootDir.'/'.$app['config']['cache_dir'];
+        $app['log_dir'] = $this->rootDir.'/'.$app['config']['log_dir'];
         $app['debug'] = $app['config']['debug'];
-        
+        $app['env'] = $app['config']['env'];
+
+        // keep all in one place to avoid confusion
+        $config = $app['config'];
+        unset($config['cache_dir']);
+        unset($config['log_dir']);
+        unset($config['env']);
+        unset($config['debug']);
+        $app['config'] = $config;
+
         // Logger
         $app->register(new MonologServiceProvider(), array(
-            'monolog.logfile' => $app['config']['log']['file'],
-            'monolog.name' => $app['config']['log']['name']
+            'monolog.logfile' => $app['config']['log.file'],
+            'monolog.name' => $app['config']['log.name']
         ));
         
         $app->register(new ValidatorServiceProvider());
@@ -59,23 +70,36 @@ class Application extends SilexApplication
             }
             $reader = new AnnotationReader();
             $loader = new AnnotationLoader($reader);
-            $cache  = extension_loaded('apc') ? new ApcCache() : null;
-            return new ClassMetadataFactory($loader, $cache);
+
+            //@TODO improve this
+            $cache  = extension_loaded('apc') ? new ApcuCache() : null;
+            return new LazyLoadingMetadataFactory($loader, $cache);
         });
         
         $app->register(new DoctrineServiceProvider(), [
-            'db.options' => $app['config']['database']
+            'db.options' => [
+                'driver' => $app['config']['database.driver'],
+                'host' => $app['config']['database.host'],
+                'dbname' => $app['config']['database.dbname'],
+                'user' => $app['config']['database.user'],
+                'password' => $app['config']['database.password']
+            ]
         ]);
-        
+
         $app->register(new DoctrineOrmServiceProvider(), [
-            'orm.proxies_dir' => '/tmp',
+            'orm.proxies_dir' => $app['cache_dir'].'/proxies',
             'orm.em.options' => [
                 'mappings' => [] // add your mappings
             ]
         ]);
-        
+
         // Domain services
         $app->addDomainServices();
+
+        //Be sure to override keys
+        foreach ($values as $key => $value) {
+            $this[$key] = $value;
+        }
     }
     
     public function bootHttpApi()
@@ -83,13 +107,13 @@ class Application extends SilexApplication
         $app = $this;
         
         // Security
-        if ($app['config']['security']['active']) {
+        if ($app['config']['security.enabled']) {
             $app['security.firewalls'] = [
                 'all' => [
                     'stateless' => true,
                     'pattern' => '^.*$',
                     'jwt' => [
-                        'secret_key' => $app['config']['security']['jwt_secret_key'],
+                        'secret_key' => $app['config']['security.jwt_secret_key'],
                         'allowed_algorithms' => ['HS256']
                     ]
                 ]
@@ -139,8 +163,10 @@ class Application extends SilexApplication
         $app->boot();
         
         $application = new \Symfony\Component\Console\Application();
-        
+        $application->setDispatcher($app['dispatcher']);
+        $application->getDefinition()->addOption(new InputOption('env', 'e', InputOption::VALUE_OPTIONAL, 'Define environment', 'dev'));
         $application->add($app['command.default']);
+
         // TODO add your other commands here
         
         $application->run();
