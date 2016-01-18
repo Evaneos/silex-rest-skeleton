@@ -2,10 +2,7 @@ Silex REST Skeleton
 ===================
 
 You can create a new project using this skeleton by running the following command:
-**$>**`composer create-project evaneos/silex-rest-skeleton <your-project-name> -s dev`
-
-At the end, when asked, do not delete the project git files, you might need it to update your skeleton if you're interested in getting updates.
-If you don't want to get updates, you can delete it and ignore the **Setup git** part and to as you want.
+**$>**`echo n | composer create-project evaneos/silex-rest-skeleton <your-project-name> -s dev`
 
 After that, you'll have to:
 
