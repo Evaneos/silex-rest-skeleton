@@ -1,2 +1,2 @@
 db.env
-rabbitmq.env
+rabbit.env

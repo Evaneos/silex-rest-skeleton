@@ -5,7 +5,6 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Firewall\ListenerInterface;
-use Prophecy\Argument\Token\TokenInterface;
 
 class JWTListener implements ListenerInterface
 {
@@ -40,8 +39,7 @@ class JWTListener implements ListenerInterface
     {
         $request = $event->getRequest();
 
-        if(null === $jwtTokenValue = $this->getToken($request->headers->get('Authorization')))
-        {
+        if (null === $jwtTokenValue = $this->getToken($request->headers->get('Authorization'))) {
             return;
         }
 

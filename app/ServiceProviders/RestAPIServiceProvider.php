@@ -8,10 +8,8 @@ use Hateoas\HateoasBuilder;
 use Hateoas\Representation\Factory\PagerfantaFactory;
 use Hateoas\UrlGenerator\CallableUrlGenerator;
 use Hautelook\TemplatedUriRouter\Routing\Generator\Rfc6570Generator;
-use JMS\Serializer\SerializerBuilder;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class RestAPIServiceProvider implements ServiceProviderInterface
 {
@@ -36,8 +34,8 @@ class RestAPIServiceProvider implements ServiceProviderInterface
         
         $app['api.converters.pagination'] = $app->share(function() use ($app){
             return new PaginationConverter(
-                $app['config']['api']['default_pagination_limit'],
-                $app['config']['api']['max_pagination_limit']
+                $app['config']['api.default_pagination_limit'],
+                $app['config']['api.max_pagination_limit']
             );
         });
         
@@ -49,7 +47,7 @@ class RestAPIServiceProvider implements ServiceProviderInterface
                 ->setUrlGenerator('templated', new CallableUrlGenerator(function($route, array $parameters, $absolute) use($app) {
                     return $app['templated_url_generator']->generate($route, $parameters, $absolute);
                 }))
-                ->setCacheDir(__DIR__ . '/../../../' . $app['config']['api']['cache_dir'])
+                ->setCacheDir($app['cache_dir'].'/serializer')
                 ->setDebug($app['debug'])
                 ->build();
             

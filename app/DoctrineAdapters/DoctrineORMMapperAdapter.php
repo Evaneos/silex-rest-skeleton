@@ -1,20 +1,24 @@
 <?php
 namespace Evaneos\REST\DoctrineAdapters;
 
+use Doctrine\ORM\Query;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Doctrine\DBAL\Query\QueryBuilder;
 
 class DoctrineORMMapperAdapter extends DoctrineORMAdapter
 {
+    /** @var callable */
+    protected $modifier;
+
     /**
      * Constructor
      *
-     * @param QueryBuilder $query
+     * @param QueryBuilder|Query $query
      * @param callable     $modifier
      * @param bool         $fetchJoinCollection
      * @param bool         $useOutputWalkers
      */
-    public function __construct(QueryBuilder $query, callable $modifier, $fetchJoinCollection = null, $useOutputWalkers = null)
+    public function __construct($query, callable $modifier, $fetchJoinCollection = null, $useOutputWalkers = null)
     {
         $this->modifier = $modifier;
         parent::__construct($query, $fetchJoinCollection, $useOutputWalkers);
