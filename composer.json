@@ -50,6 +50,7 @@
   "scripts": {
     "test": "vendor/bin/behat",
     "cs": "vendor/bin/php-cs-fixer fix",
-    "cs-test": "vendor/bin/php-cs-fixer fix --dry-run --diff"
+    "cs-test": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+    "git-setup": "bin/git.sh"
   }
 }
