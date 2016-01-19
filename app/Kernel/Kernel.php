@@ -26,6 +26,11 @@ abstract class Kernel implements KernelInterface
     /** @var Application */
     protected $app;
 
+    /**
+     * @var bool
+     */
+    protected $booted;
+
     const VERSION = '1.0.0';
     const VERSION_ID = 100000;
     const NAME = 'Silex Skeleton';
@@ -40,6 +45,7 @@ abstract class Kernel implements KernelInterface
     {
         $this->env = $env;
         $this->debug = $debug;
+        $this->booted = false;
 
         $this->app = new Application(array(
             'root_dir' => __DIR__ . '/../..',
@@ -76,6 +82,11 @@ abstract class Kernel implements KernelInterface
 
     public function boot()
     {
+        //Avoid to boot many times
+        if(true === $this->booted){
+            return;
+        }
+
         $this->app->register(new ConfigServiceProvider($this->app['root_dir'] . '/config/config_' . $this->getEnv() . '.yml', array(), new YamlConfigDriver()));
 
         $this->app['cache_dir'] = $this->app['root_dir'] . '/' . $this->app['config']['cache_dir'];
@@ -91,6 +102,7 @@ abstract class Kernel implements KernelInterface
         unset($config['debug']);
         $this->app['config'] = $config;
 
+        //Prevent to prepend php stream
         if ('php://' !== substr($this->app['config']['log.file'], 0, 6)) {
             $logFile = $this->app['config']['log.file'] = $this->app['log_dir'] . '/' . $this->app['config']['log.file'];
         } else {
@@ -139,6 +151,7 @@ abstract class Kernel implements KernelInterface
         $this->doBoot();
 
         $this->app->boot();
+        $this->booted = true;
     }
 
     /**
