@@ -87,7 +87,13 @@ abstract class Kernel implements KernelInterface
             return;
         }
 
-        $this->app->register(new ConfigServiceProvider($this->app['root_dir'] . '/config/config_' . $this->getEnv() . '.yml', array(), new YamlConfigDriver()));
+        $filename = $this->app['root_dir'] . '/config/config_' . $this->getEnv() . '.yml';
+
+        if(true === $this->debug && !file_exists($filename)){
+            throw new \Exception('Unable to config file '.$filename);
+        }
+
+        $this->app->register(new ConfigServiceProvider($filename, array(), new YamlConfigDriver()));
 
         $this->app['cache_dir'] = $this->app['root_dir'] . '/' . $this->app['config']['cache_dir'];
         $this->app['log_dir'] = $this->app['root_dir'] . '/' . $this->app['config']['log_dir'];
@@ -97,10 +103,25 @@ abstract class Kernel implements KernelInterface
         // keep all in one place to avoid confusion
         $config = $this->app['config'];
         unset($config['cache_dir']);
-        unset($config['log_dir;']);
+        unset($config['log_dir']);
         unset($config['env']);
         unset($config['debug']);
         $this->app['config'] = $config;
+
+        if(true === $this->debug){
+            foreach(array($this->app['cache_dir'], $this->app['log_dir']) as $dir){
+                if(!file_exists($dir)){
+                    mkdir($dir, 0777);
+                }
+
+                if(!is_writable($dir)){
+                    throw new \Exception(sprintf(
+                        'Directory "%s" is not writable',
+                        $dir
+                    ));
+                }
+            }
+        }
 
         //Prevent to prepend php stream
         if ('php://' !== substr($this->app['config']['log.file'], 0, 6)) {

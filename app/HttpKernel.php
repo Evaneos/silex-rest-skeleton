@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\TerminableInterface;
-use Whoops\Provider\Silex\WhoopsServiceProvider;
 
 class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterface
 {
@@ -66,11 +65,6 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
         $this->app->error(function (BadRequestException $invalidRequest) {
             return $this->app['api.response.builder']->buildResponse($invalidRequest->getErrors(), Response::HTTP_BAD_REQUEST);
         });
-
-        // Debug management
-        if ($this->isDebug()) {
-            $this->app->register(new WhoopsServiceProvider());
-        }
 
         $this->registerDomainServices();
     }
