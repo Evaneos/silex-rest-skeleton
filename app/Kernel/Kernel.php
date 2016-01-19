@@ -104,7 +104,7 @@ abstract class Kernel implements KernelInterface
 
         //Prevent to prepend php stream
         if ('php://' !== substr($this->app['config']['log.file'], 0, 6)) {
-            $logFile = $this->app['config']['log.file'] = $this->app['log_dir'] . '/' . $this->app['config']['log.file'];
+            $logFile = $this->app['log_dir'] . '/' . $this->app['config']['log.file'];
         } else {
             $logFile = $this->app['config']['log.file'];
         }
