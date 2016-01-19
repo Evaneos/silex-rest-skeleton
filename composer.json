@@ -71,9 +71,8 @@
         "database.user": "SILEX_SKT_DB_USER",
         "database.password": "SILEX_SKT_DB_PASSWORD",
         "database.dbname": "SILEX_SKT_DB_NAME",
-        "cache_dir": "SILEX_SKT_CACHE_DIR",
-        "log_dir": "SILEX_SKT_LOG_DIR",
-        "security.jwt_secret_key": "SILEX_SKT_SECRET_KEY"
+        "security.jwt_secret_key": "SILEX_SKT_SECRET_KEY",
+        "security.enabled": "SILEX_SKT_SECURITY_ENABLED"
       }
     }
   }

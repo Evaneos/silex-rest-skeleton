@@ -6,7 +6,7 @@ use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Cache\ApcuCache;
-use Igorw\Silex\ConfigServiceProvider;
+use Evaneos\REST\ServiceProviders\ConfigServiceProvider;
 use Igorw\Silex\YamlConfigDriver;
 use Silex\Application;
 use Silex\Provider\DoctrineServiceProvider;
@@ -26,10 +26,11 @@ abstract class Kernel implements KernelInterface
     /** @var Application */
     protected $app;
 
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     protected $booted;
+
+    /** @var string */
+    protected $rootDir;
 
     const VERSION = '1.0.0';
     const VERSION_ID = 100000;
@@ -46,9 +47,14 @@ abstract class Kernel implements KernelInterface
         $this->env = $env;
         $this->debug = $debug;
         $this->booted = false;
+        $this->rootDir = __DIR__ . '/../..';
 
         $this->app = new Application(array(
-            'root_dir' => __DIR__ . '/../..',
+            'root_dir' => $this->rootDir,
+            'cache_dir' => $this->getCacheDir(),
+            'log_dir' => $this->getLogDir(),
+            'env' => $env,
+            'debug' => $debug
         ));
     }
 
@@ -66,6 +72,24 @@ abstract class Kernel implements KernelInterface
     public function isDebug()
     {
         return $this->debug;
+    }
+
+    protected function getLogDir()
+    {
+        if(false === $dir = getenv('SILEX_SKT_LOG_DIR')){
+            $dir = '/log';
+        }
+
+        return $this->rootDir.$dir;
+    }
+
+    protected function getCacheDir()
+    {
+        if(false === $dir = getenv('SILEX_SKT_CACHE_DIR')){
+            $dir = '/cache';
+        }
+
+        return $this->rootDir.$dir;
     }
 
     /**
@@ -94,19 +118,6 @@ abstract class Kernel implements KernelInterface
         }
 
         $this->app->register(new ConfigServiceProvider($filename, array(), new YamlConfigDriver()));
-
-        $this->app['cache_dir'] = $this->app['root_dir'] . '/' . $this->app['config']['cache_dir'];
-        $this->app['log_dir'] = $this->app['root_dir'] . '/' . $this->app['config']['log_dir'];
-        $this->app['debug'] = $this->debug;
-        $this->app['env'] = $this->env;
-
-        // keep all in one place to avoid confusion
-        $config = $this->app['config'];
-        unset($config['cache_dir']);
-        unset($config['log_dir']);
-        unset($config['env']);
-        unset($config['debug']);
-        $this->app['config'] = $config;
 
         if(true === $this->debug){
             foreach(array($this->app['cache_dir'], $this->app['log_dir']) as $dir){

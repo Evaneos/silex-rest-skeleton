@@ -25,10 +25,7 @@ class ApiControllerProvider implements ControllerProviderInterface
             return new ApiController($app['api.response.builder']);
         });
 
-        $controllers->get(
-            '/',
-            'application.controllers.api:root'
-        );
+        $controllers->get('/', 'application.controllers.api:root');
 
         return $controllers;
     }

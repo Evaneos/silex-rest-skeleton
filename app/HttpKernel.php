@@ -59,8 +59,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
 
         $this->app->register(new ServiceControllerServiceProvider());
 
-        // Routes mounting
-        $this->registerRoutes();
+        $this->registerControllers();
 
         $this->app->error(function (BadRequestException $invalidRequest) {
             return $this->app['api.response.builder']->buildResponse($invalidRequest->getErrors(), Response::HTTP_BAD_REQUEST);
@@ -102,7 +101,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
     /**
      * @param Application $this->app
      */
-    private function registerRoutes()
+    private function registerControllers()
     {
         $this->app->mount('/', new ApiControllerProvider());
 
