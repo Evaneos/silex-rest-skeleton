@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\ServiceProviders;
 
 use Evaneos\REST\Security\JWT\JWTAuthenticationProvider;
@@ -20,19 +21,19 @@ class SecurityJWTServiceProvider implements ServiceProviderInterface
     {
         $app['security.authentication_listener.factory.jwt'] = $app->protect(function ($name, $options) use ($app) {
 
-            $app['security.authentication_provider.'.$name.'.jwt'] = $app->share(function () use ($app, $options) {
+            $app['security.authentication_provider.' . $name . '.jwt'] = $app->share(function () use ($app, $options) {
                 return new JWTAuthenticationProvider(new SecurityUserConverter(), new JWTDecoder($options['secret_key'], $options['allowed_algorithms']));
             });
 
-            $app['security.authentication_listener.'.$name.'.jwt'] = $app->share(function () use ($app) {
+            $app['security.authentication_listener.' . $name . '.jwt'] = $app->share(function () use ($app) {
                 return new JWTListener($app['security.token_storage'], $app['security.authentication_manager']);
             });
 
             return array(
-                'security.authentication_provider.'.$name.'.jwt',
-                'security.authentication_listener.'.$name.'.jwt',
+                'security.authentication_provider.' . $name . '.jwt',
+                'security.authentication_listener.' . $name . '.jwt',
                 null,
-                'pre_auth'
+                'pre_auth',
             );
         });
     }

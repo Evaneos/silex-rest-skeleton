@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\Security\JWT;
 
 use Evaneos\REST\Security\User;
@@ -7,7 +8,8 @@ use Evaneos\REST\Security\UserId;
 class SecurityUserConverter implements UserConverter
 {
     /**
-     * (non-PHPdoc)
+     * (non-PHPdoc).
+     *
      * @see \Evaneos\REST\Security\JWT\UserConverter::buildUserFromToken()
      */
     public function buildUserFromToken($token)

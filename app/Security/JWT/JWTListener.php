@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\Security\JWT;
 
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -19,9 +20,9 @@ class JWTListener implements ListenerInterface
     private $authenticationManager;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param TokenStorageInterface $tokenStorage
+     * @param TokenStorageInterface          $tokenStorage
      * @param AuthenticationManagerInterface $authenticationManager
      */
     public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager)
@@ -52,7 +53,8 @@ class JWTListener implements ListenerInterface
     }
 
     /**
-     * @param  string $authorizationHeader
+     * @param string $authorizationHeader
+     *
      * @return string
      */
     private function getToken($authorizationHeader)

@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\API\Errors;
 
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -17,8 +18,7 @@ final class ErrorList
      */
     public function __construct(ConstraintViolationListInterface $violations)
     {
-        foreach($violations as $violation)
-        {
+        foreach ($violations as $violation) {
             $this->errors[] = new FieldError($violation);
         }
     }

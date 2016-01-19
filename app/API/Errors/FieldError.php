@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\API\Errors;
 
 use Symfony\Component\Validator\ConstraintViolationInterface;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\Security\JWT;
 
 use Firebase\JWT\JWT;
@@ -6,7 +7,7 @@ use Firebase\JWT\JWT;
 class JWTDecoder
 {
     /**
-     * @var String
+     * @var string
      */
     private $secretKey;
 
@@ -16,10 +17,10 @@ class JWTDecoder
     private $allowedAlgorithms;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param String $secretKey
-     * @param array $allowedAlgorithms
+     * @param string $secretKey
+     * @param array  $allowedAlgorithms
      */
     public function __construct($secretKey, array $allowedAlgorithms = [])
     {
@@ -28,7 +29,8 @@ class JWTDecoder
     }
 
     /**
-     * @param String $encodedToken
+     * @param string $encodedToken
+     *
      * @return object
      */
     public function decode($encodedToken)

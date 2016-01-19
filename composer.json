@@ -25,7 +25,8 @@
     "symfony/validator": "^2.1",
     "igorw/config-service-provider": "^1.2",
     "monolog/monolog": "^1.17",
-    "incenteev/composer-parameter-handler": "~2.0"
+    "incenteev/composer-parameter-handler": "~2.0",
+    "symfony/polyfill-php55": "~1.0"
   },
   "require-dev": {
     "behat/behat": "^3.0",
@@ -62,7 +63,7 @@
   },
   "extra": {
     "incenteev-parameters": {
-      "file": "config/config.yml",
+      "file": "config/config_dev.yml",
       "dist-file": "config/config.yml.tpl",
       "parameter-key": "config",
       "env-map": {

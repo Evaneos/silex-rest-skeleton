@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\Security;
 
 class UserId
@@ -9,7 +10,7 @@ class UserId
     private $id;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param mixed $id
      */

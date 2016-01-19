@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\Security\JWT;
 
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
@@ -18,10 +19,10 @@ class JWTAuthenticationProvider implements AuthenticationProviderInterface
     private $JWTDecoder;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param UserConverter $userProvider
-     * @param JWTDecoder $JWTDecoder
+     * @param JWTDecoder    $JWTDecoder
      */
     public function __construct(UserConverter $userProvider, JWTDecoder $JWTDecoder)
     {
@@ -34,19 +35,17 @@ class JWTAuthenticationProvider implements AuthenticationProviderInterface
      *
      * @param TokenInterface $token The TokenInterface instance to authenticate
      *
+     * @throws AuthenticationException if the authentication fails
      * @return TokenInterface An authenticated TokenInterface instance, never null
      *
-     * @throws AuthenticationException if the authentication fails
      */
     public function authenticate(TokenInterface $token)
     {
-        if(! $token instanceof JWTToken)
-        {
+        if (!$token instanceof JWTToken) {
             throw new AuthenticationException(sprintf('%s works only for JWTToken', __CLASS__));
         }
 
-        if(! $token->getCredentials())
-        {
+        if (!$token->getCredentials()) {
             throw new AuthenticationException('JWTToken must contain a token in order to authenticate.');
         }
 

@@ -20,7 +20,7 @@ class JWTToken extends AbstractToken
     }
 
     /**
-     * @param String $token
+     * @param string $token
      */
     public function setToken($token)
     {
