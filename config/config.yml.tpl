@@ -1,5 +1,4 @@
 config:
-    debug: true
     cache_dir: cache
     log_dir: log
     security.enabled: true

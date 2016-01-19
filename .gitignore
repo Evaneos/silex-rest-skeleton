@@ -1,5 +1,6 @@
 composer.lock
 /vendor
+/config/config_*.yml
 /config/config.yml
 /log/
 !/log/.gitkeep
