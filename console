@@ -1,5 +1,4 @@
 #!/usr/bin/env php
-
 <?php
 use Evaneos\REST\CLI\Application;
 use Evaneos\REST\CliKernel;
