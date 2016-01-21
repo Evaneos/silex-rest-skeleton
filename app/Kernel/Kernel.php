@@ -180,10 +180,19 @@ abstract class Kernel implements KernelInterface
             ],
         ]);
 
+        $this->registerDomainServices();
         $this->doBoot();
 
         $this->app->boot();
         $this->booted = true;
+    }
+
+    /**
+     * @param Application $this->app
+     */
+    private function registerDomainServices()
+    {
+        // TODO add your domain services here
     }
 
     /**

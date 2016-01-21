@@ -5,6 +5,7 @@ namespace Evaneos\REST;
 use Evaneos\REST\API\ControllerProviders\ApiControllerProvider;
 use Evaneos\REST\API\Exceptions\BadRequestException;
 use Evaneos\REST\Kernel\Kernel;
+use Evaneos\REST\ServiceProviders\ControllersServiceProvider;
 use Evaneos\REST\ServiceProviders\RestAPIServiceProvider;
 use Evaneos\REST\ServiceProviders\SecurityJWTServiceProvider;
 use Silex\Application;
@@ -59,13 +60,11 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
 
         $this->app->register(new ServiceControllerServiceProvider());
 
-        $this->registerControllers();
+        $this->registerRoutes();
 
         $this->app->error(function (BadRequestException $invalidRequest) {
             return $this->app['api.response.builder']->buildResponse($invalidRequest->getErrors(), Response::HTTP_BAD_REQUEST);
         });
-
-        $this->registerDomainServices();
     }
 
     /**
@@ -93,16 +92,9 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
     /**
      * @param Application $this->app
      */
-    private function registerDomainServices()
+    private function registerRoutes()
     {
-        // TODO add your domain services here
-    }
-
-    /**
-     * @param Application $this->app
-     */
-    private function registerControllers()
-    {
+        $this->app->register(new ControllersServiceProvider());
         $this->app->mount('/', new ApiControllerProvider());
 
         // TODO add your other routes mounting here

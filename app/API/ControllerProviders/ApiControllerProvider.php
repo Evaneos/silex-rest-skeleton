@@ -2,7 +2,6 @@
 
 namespace Evaneos\REST\API\ControllerProviders;
 
-use Evaneos\REST\API\Controllers\ApiController;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -21,11 +20,10 @@ class ApiControllerProvider implements ControllerProviderInterface
         /** @var ControllerCollection $controllers */
         $controllers = $app['controllers_factory'];
 
-        $app['application.controllers.api'] = $app->share(function () use ($app) {
-            return new ApiController($app['api.response.builder']);
-        });
-
-        $controllers->get('/', 'application.controllers.api:root');
+        $controllers->get(
+            '/',
+            'application.controllers.api:root'
+        );
 
         return $controllers;
     }
