@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\API\Converters;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +17,7 @@ class PaginationConverter
     private $maxLimit;
 
     /**
-     * Constructor
+     * Constructor.
      * 
      * @param int $defaultLimit
      * @param int $maxLimit
@@ -28,20 +29,22 @@ class PaginationConverter
     }
 
     /**
-     * @param  int     $page
-     * @param  Request $request
+     * @param int     $page
+     * @param Request $request
+     *
      * @return int
      */
     public function convertPage($page, Request $request)
     {
         $page = intval($request->query->get('page'));
+
         return $page > 1 ? $page : 1;
     }
 
     /**
-     * 
-     * @param  int     $limit
-     * @param  Request $request
+     * @param int     $limit
+     * @param Request $request
+     *
      * @return int
      */
     public function convertLimit($limit, Request $request)
@@ -49,6 +52,7 @@ class PaginationConverter
         $limit = intval($request->query->get('limit',  $this->defaultLimit));
 
         $limit = $limit > 0 ? $limit : $this->defaultLimit;
+
         return $limit < $this->maxLimit ? $limit : $this->maxLimit;
     }
 }

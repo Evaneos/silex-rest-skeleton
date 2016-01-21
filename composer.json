@@ -25,15 +25,16 @@
     "symfony/validator": "^2.1",
     "igorw/config-service-provider": "^1.2",
     "monolog/monolog": "^1.17",
-    "incenteev/composer-parameter-handler": "~2.0"
+    "incenteev/composer-parameter-handler": "~2.0",
+    "symfony/polyfill-php55": "~1.0"
   },
   "require-dev": {
     "behat/behat": "^3.0",
     "phpspec/phpspec": "~2.0",
     "phpunit/phpunit": "^4.0",
-    "filp/whoops": "^1.1",
     "fabpot/php-cs-fixer": "^1.10",
-    "symfony/var-dumper": "^3.0"
+    "symfony/var-dumper": "^3.0",
+    "symfony/debug": "^3.0"
   },
   "config": {
     "bin-dir": "vendor/bin"
@@ -62,18 +63,16 @@
   },
   "extra": {
     "incenteev-parameters": {
-      "file": "config/config.yml",
+      "file": "config/config_dev.yml",
       "dist-file": "config/config.yml.tpl",
       "parameter-key": "config",
       "env-map": {
-        "env": "SILEX_SKT_ENV",
-        "debug": "SILEX_SKT_DEBUG",
         "database.host": "SILEX_SKT_DB_HOST",
         "database.user": "SILEX_SKT_DB_USER",
         "database.password": "SILEX_SKT_DB_PASSWORD",
         "database.dbname": "SILEX_SKT_DB_NAME",
-        "cache_dir": "SILEX_SKT_CACHE_DIR",
-        "log_dir": "SILEX_SKT_LOG_DIR"
+        "security.jwt_secret_key": "SILEX_SKT_SECRET_KEY",
+        "security.enabled": "SILEX_SKT_SECURITY_ENABLED"
       }
     }
   }

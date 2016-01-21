@@ -1,8 +1,4 @@
 config:
-    env: dev
-    debug: true
-    cache_dir: cache
-    log_dir: log
     security.enabled: true
     security.jwt_secret_key: secret
     database.driver: pdo_pgsql

@@ -1,9 +1,11 @@
 <?php
+
 namespace Evaneos\REST\ServiceProviders;
 
+use Evaneos\REST\Commands\SampleCommand;
+use Evaneos\REST\Commands\ServerCommand;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
-use Evaneos\REST\Commands\SampleCommand;
 
 class CommandServiceProvider implements ServiceProviderInterface
 {
@@ -15,8 +17,12 @@ class CommandServiceProvider implements ServiceProviderInterface
      */
     public function register(Application $app)
     {
-        $app['command.default'] = $app->share(function() {
+        $app['command.default'] = $app->share(function () {
             return new SampleCommand('command:sample');
+        });
+
+        $app['command.default'] = $app->share(function () use ($app) {
+            return new ServerCommand('server:command', $app);
         });
     }
 
