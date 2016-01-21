@@ -23,6 +23,7 @@
     "pagerfanta/pagerfanta": "^1.0",
     "hautelook/templated-uri-router": "^2.0",
     "symfony/validator": "^2.1",
+    "igorw/config-service-provider": "^1.2",
     "monolog/monolog": "^1.17",
     "incenteev/composer-parameter-handler": "~2.0",
     "symfony/polyfill-php55": "~1.0"
