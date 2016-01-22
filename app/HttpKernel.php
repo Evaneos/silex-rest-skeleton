@@ -7,7 +7,6 @@ use Evaneos\REST\API\Exceptions\BadRequestException;
 use Evaneos\REST\Kernel\Kernel;
 use Evaneos\REST\ServiceProviders\ControllersServiceProvider;
 use Evaneos\REST\ServiceProviders\RestAPIServiceProvider;
-use Evaneos\REST\ServiceProviders\SecurityJWTServiceProvider;
 use Silex\Application;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
@@ -16,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\TerminableInterface;
+use Evaneos\JWT\Providers\Silex\SecurityJWTServiceProvider;
 
 class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterface
 {

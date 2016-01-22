@@ -26,7 +26,8 @@
     "igorw/config-service-provider": "^1.2",
     "monolog/monolog": "^1.17",
     "incenteev/composer-parameter-handler": "~2.0",
-    "symfony/polyfill-php55": "~1.0"
+    "symfony/polyfill-php55": "~1.0",
+    "evaneos/jwt": "^0.1"
   },
   "require-dev": {
     "behat/behat": "^3.0",
