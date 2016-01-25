@@ -15,7 +15,7 @@ use Silex\Provider\ValidatorServiceProvider;
 use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 
-abstract class Kernel implements KernelInterface
+class Kernel implements KernelInterface
 {
     /** @var string */
     private $env;
@@ -102,7 +102,9 @@ abstract class Kernel implements KernelInterface
         return true === $id ? static::VERSION_ID : static::VERSION;
     }
 
-    abstract protected function doBoot();
+    protected function doBoot()
+    {
+    }
 
     public function boot()
     {
