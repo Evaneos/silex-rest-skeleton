@@ -21,7 +21,7 @@ class Application extends BaseApplication
     {
         $this->kernel = $kernel;
 
-        parent::__construct($kernel->getName(), Kernel::VERSION . ' - ' . $kernel->getName() . '/' . $kernel->getEnv() . ($kernel->isDebug() ? '/debug' : ''));
+        parent::__construct($kernel->getName(), Kernel::VERSION.' - '.$kernel->getName().'/'.$kernel->getEnv().($kernel->isDebug() ? '/debug' : ''));
 
         $kernel->boot();
 

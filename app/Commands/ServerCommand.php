@@ -72,7 +72,7 @@ EOF
         $documentRoot = $input->getOption('docroot');
 
         if (null === $documentRoot) {
-            $documentRoot = $this->application['root_dir'] . '/public';
+            $documentRoot = $this->application['root_dir'].'/public';
         }
 
         if (!is_dir($documentRoot)) {
@@ -85,7 +85,7 @@ EOF
         $address = $input->getArgument('address');
 
         if (false === strpos($address, ':')) {
-            $address = $address . ':' . $input->getOption('port');
+            $address = $address.':'.$input->getOption('port');
         }
 
         if ($this->isOtherServerProcessRunning($address)) {
@@ -141,7 +141,7 @@ EOF
      */
     private function createPhpProcessBuilder(SymfonyStyle $io, $address, $router, $env)
     {
-        $router = $router ?: $this->application['root_dir'] . sprintf('/app/CLI/Router/router_%s.php', $env);
+        $router = $router ?: $this->application['root_dir'].sprintf('/app/CLI/Router/router_%s.php', $env);
 
         if (!file_exists($router)) {
             $io->error(sprintf('The given router script "%s" does not exist.', $router));
@@ -191,6 +191,6 @@ EOF
      */
     protected function getLockFile($address)
     {
-        return sys_get_temp_dir() . '/' . strtr($address, '.:', '--') . '.pid';
+        return sys_get_temp_dir().'/'.strtr($address, '.:', '--').'.pid';
     }
 }

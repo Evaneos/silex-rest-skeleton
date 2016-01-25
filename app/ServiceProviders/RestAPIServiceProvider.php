@@ -49,7 +49,7 @@ class RestAPIServiceProvider implements ServiceProviderInterface
                 ->setUrlGenerator('templated', new CallableUrlGenerator(function ($route, array $parameters, $absolute) use ($app) {
                     return $app['templated_url_generator']->generate($route, $parameters, $absolute);
                 }))
-                ->setCacheDir($app['cache_dir'] . '/serializer')
+                ->setCacheDir($app['cache_dir'].'/serializer')
                 ->setDebug($app['debug'])
                 ->build();
 

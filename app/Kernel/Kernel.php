@@ -47,14 +47,14 @@ abstract class Kernel implements KernelInterface
         $this->env = $env;
         $this->debug = $debug;
         $this->booted = false;
-        $this->rootDir = __DIR__ . '/../..';
+        $this->rootDir = __DIR__.'/../..';
 
         $this->app = new Application(array(
             'root_dir' => $this->rootDir,
             'cache_dir' => $this->getCacheDir(),
             'log_dir' => $this->getLogDir(),
             'env' => $env,
-            'debug' => $debug
+            'debug' => $debug,
         ));
     }
 
@@ -76,7 +76,7 @@ abstract class Kernel implements KernelInterface
 
     protected function getLogDir()
     {
-        if(false === $dir = getenv('SILEX_SKT_LOG_DIR')){
+        if (false === $dir = getenv('SILEX_SKT_LOG_DIR')) {
             $dir = '/log';
         }
 
@@ -85,7 +85,7 @@ abstract class Kernel implements KernelInterface
 
     protected function getCacheDir()
     {
-        if(false === $dir = getenv('SILEX_SKT_CACHE_DIR')){
+        if (false === $dir = getenv('SILEX_SKT_CACHE_DIR')) {
             $dir = '/cache';
         }
 
@@ -107,25 +107,25 @@ abstract class Kernel implements KernelInterface
     public function boot()
     {
         //Avoid to boot many times
-        if(true === $this->booted){
+        if (true === $this->booted) {
             return;
         }
 
-        $filename = $this->app['root_dir'] . '/config/config_' . $this->getEnv() . '.yml';
+        $filename = $this->app['root_dir'].'/config/config_'.$this->getEnv().'.yml';
 
-        if(true === $this->debug && !file_exists($filename)){
+        if (true === $this->debug && !file_exists($filename)) {
             throw new \Exception('Unable to config file '.$filename);
         }
 
         $this->app->register(new ConfigServiceProvider($filename, array(), new YamlConfigDriver()));
 
-        if(true === $this->debug){
-            foreach(array($this->app['cache_dir'], $this->app['log_dir']) as $dir){
-                if(!file_exists($dir)){
+        if (true === $this->debug) {
+            foreach (array($this->app['cache_dir'], $this->app['log_dir']) as $dir) {
+                if (!file_exists($dir)) {
                     mkdir($dir, 0777);
                 }
 
-                if(!is_writable($dir)){
+                if (!is_writable($dir)) {
                     throw new \Exception(sprintf(
                         'Directory "%s" is not writable',
                         $dir
@@ -136,7 +136,7 @@ abstract class Kernel implements KernelInterface
 
         //Prevent to prepend php stream
         if ('php://' !== substr($this->app['config']['log.file'], 0, 6)) {
-            $logFile = $this->app['log_dir'] . '/' . $this->app['config']['log.file'];
+            $logFile = $this->app['log_dir'].'/'.$this->app['config']['log.file'];
         } else {
             $logFile = $this->app['config']['log.file'];
         }
@@ -174,7 +174,7 @@ abstract class Kernel implements KernelInterface
         ]);
 
         $this->app->register(new DoctrineOrmServiceProvider(), [
-            'orm.proxies_dir' => $this->app['cache_dir'] . '/proxies',
+            'orm.proxies_dir' => $this->app['cache_dir'].'/proxies',
             'orm.em.options' => [
                 'mappings' => [], // add your mappings
             ],
