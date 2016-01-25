@@ -5,7 +5,7 @@ use Evaneos\REST\Kernel\Kernel;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$kernel = new Kernel('dev', true);
+$kernel = new Kernel(getenv('SILEX_SKT_ENV') ?: 'dev', false);
 $kernel->boot();
 $app = $kernel->getApp();
 
