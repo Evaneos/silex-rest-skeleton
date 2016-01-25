@@ -1,12 +1,18 @@
 <?php
+
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
-use Evaneos\REST\CliKernel;
+use Evaneos\REST\Kernel\Kernel;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$kernel = new CliKernel('dev', true);
+$kernel = new Kernel('dev', true);
 $kernel->boot();
 $app = $kernel->getApp();
+
+if(!$app->offsetExists('orm.em')){
+    throw new Exception('No entity manager defined, please check "config/cli-config.php" file');
+}
+
 $entityManager = $app['orm.em'];
 
 return ConsoleRunner::createHelperSet($entityManager);
