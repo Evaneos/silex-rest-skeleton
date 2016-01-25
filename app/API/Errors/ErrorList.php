@@ -9,7 +9,7 @@ final class ErrorList
     /**
      * @var FieldError[]
      */
-    private $errors = [];
+    private $errors = array();
 
     /**
      * ErrorList constructor.

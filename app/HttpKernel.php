@@ -2,6 +2,7 @@
 
 namespace Evaneos\REST;
 
+use Evaneos\JWT\Providers\Silex\SecurityJWTServiceProvider;
 use Evaneos\REST\API\ControllerProviders\ApiControllerProvider;
 use Evaneos\REST\API\Exceptions\BadRequestException;
 use Evaneos\REST\Kernel\Kernel;
@@ -15,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\TerminableInterface;
-use Evaneos\JWT\Providers\Silex\SecurityJWTServiceProvider;
 
 class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterface
 {
@@ -23,16 +23,16 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
     {
         // Security
         if ($this->app['config']['security.enabled']) {
-            $this->app['security.firewalls'] = [
-                'all' => [
+            $this->app['security.firewalls'] = array(
+                'all' => array(
                     'stateless' => true,
                     'pattern' => '^.*$',
-                    'jwt' => [
+                    'jwt' => array(
                         'secret_key' => $this->app['config']['security.jwt_secret_key'],
-                        'allowed_algorithms' => ['HS256'],
-                    ],
-                ],
-            ];
+                        'allowed_algorithms' => array('HS256'),
+                    ),
+                ),
+            );
 
             $this->app->register(new SecurityServiceProvider());
             $this->app['security.voters'] = $this->app->extend('security.voters', function ($voters) {
@@ -77,6 +77,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
     public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
         $this->boot();
+
         return $this->app->handle($request);
     }
 

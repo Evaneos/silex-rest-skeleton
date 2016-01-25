@@ -54,7 +54,7 @@ class Kernel implements KernelInterface
             'cache_dir' => $this->getCacheDir(),
             'log_dir' => $this->getLogDir(),
             'env' => $env,
-            'debug' => $debug
+            'debug' => $debug,
         ));
     }
 
@@ -76,20 +76,20 @@ class Kernel implements KernelInterface
 
     protected function getLogDir()
     {
-        if(false === $dir = getenv('SILEX_SKT_LOG_DIR')){
+        if (false === $dir = getenv('SILEX_SKT_LOG_DIR')) {
             $dir = '/log';
         }
 
-        return $this->rootDir.$dir;
+        return $this->rootDir . $dir;
     }
 
     protected function getCacheDir()
     {
-        if(false === $dir = getenv('SILEX_SKT_CACHE_DIR')){
+        if (false === $dir = getenv('SILEX_SKT_CACHE_DIR')) {
             $dir = '/cache';
         }
 
-        return $this->rootDir.$dir;
+        return $this->rootDir . $dir;
     }
 
     /**
@@ -102,30 +102,32 @@ class Kernel implements KernelInterface
         return true === $id ? static::VERSION_ID : static::VERSION;
     }
 
-    protected function doBoot() { }
+    protected function doBoot()
+    {
+    }
 
     public function boot()
     {
         //Avoid to boot many times
-        if(true === $this->booted){
+        if (true === $this->booted) {
             return;
         }
 
         $filename = $this->app['root_dir'] . '/config/config_' . $this->getEnv() . '.yml';
 
-        if(true === $this->debug && !file_exists($filename)){
-            throw new \Exception('Unable to config file '.$filename);
+        if (true === $this->debug && !file_exists($filename)) {
+            throw new \Exception('Unable to config file ' . $filename);
         }
 
         $this->app->register(new ConfigServiceProvider($filename, array(), new YamlConfigDriver()));
 
-        if(true === $this->debug){
-            foreach(array($this->app['cache_dir'], $this->app['log_dir']) as $dir){
-                if(!file_exists($dir)){
+        if (true === $this->debug) {
+            foreach (array($this->app['cache_dir'], $this->app['log_dir']) as $dir) {
+                if (!file_exists($dir)) {
                     mkdir($dir, 0777);
                 }
 
-                if(!is_writable($dir)){
+                if (!is_writable($dir)) {
                     throw new \Exception(sprintf(
                         'Directory "%s" is not writable',
                         $dir
@@ -163,22 +165,22 @@ class Kernel implements KernelInterface
             return new LazyLoadingMetadataFactory($loader, $cache);
         });
 
-        $this->app->register(new DoctrineServiceProvider(), [
-            'db.options' => [
+        $this->app->register(new DoctrineServiceProvider(), array(
+            'db.options' => array(
                 'driver' => $this->app['config']['database.driver'],
                 'host' => $this->app['config']['database.host'],
                 'dbname' => $this->app['config']['database.dbname'],
                 'user' => $this->app['config']['database.user'],
                 'password' => $this->app['config']['database.password'],
-            ],
-        ]);
+            ),
+        ));
 
-        $this->app->register(new DoctrineOrmServiceProvider(), [
+        $this->app->register(new DoctrineOrmServiceProvider(), array(
             'orm.proxies_dir' => $this->app['cache_dir'] . '/proxies',
-            'orm.em.options' => [
-                'mappings' => [], // add your mappings
-            ],
-        ]);
+            'orm.em.options' => array(
+                'mappings' => $this->registerDoctrineMapping(),
+            ),
+        ));
 
         $this->registerDomainServices();
         $this->doBoot();
@@ -187,10 +189,8 @@ class Kernel implements KernelInterface
         $this->booted = true;
     }
 
-    /**
-     * @param Application $this->app
-     */
-    private function registerDomainServices()
+
+    protected function registerDomainServices()
     {
         // TODO add your domain services here
     }
@@ -209,5 +209,13 @@ class Kernel implements KernelInterface
     public function getName()
     {
         return static::NAME;
+    }
+
+    /**
+     * @return array
+     */
+    protected function registerDoctrineMapping()
+    {
+        return array();
     }
 }
