@@ -141,19 +141,11 @@ EOF
      */
     private function createPhpProcessBuilder(SymfonyStyle $io, $address, $router, $env)
     {
-        $router = $router ?: $this->application['root_dir'] . sprintf('/app/CLI/Router/router_%s.php', $env);
-
-        if (!file_exists($router)) {
-            $io->error(sprintf('The given router script "%s" does not exist.', $router));
-
-            return;
-        }
-
+        $router = $router ?: $this->application['root_dir'] . '/app/CLI/Router/router.php';
         $router = realpath($router);
         $finder = new PhpExecutableFinder();
         if (false === $binary = $finder->find()) {
             $io->error('Unable to find PHP binary to run server.');
-
             return;
         }
 
