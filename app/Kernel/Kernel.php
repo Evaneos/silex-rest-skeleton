@@ -190,7 +190,7 @@ class Kernel implements KernelInterface
     /**
      * @param Application $this->app
      */
-    private function registerDomainServices()
+    protected function registerDomainServices()
     {
         // TODO add your domain services here
     }
