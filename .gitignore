@@ -6,3 +6,4 @@ composer.lock
 !/log/.gitkeep
 /cache/
 !/cache/.gitkeep
+!/config/config_test.yml
