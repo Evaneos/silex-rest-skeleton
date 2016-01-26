@@ -35,19 +35,22 @@
     "phpunit/phpunit": "^4.0",
     "fabpot/php-cs-fixer": "^1.10",
     "symfony/var-dumper": "^3.0",
-    "symfony/debug": "^3.0"
+    "symfony/debug": "^3.0",
+    "webmozart/path-util": "^2.3"
   },
   "config": {
     "bin-dir": "vendor/bin"
   },
   "autoload": {
     "psr-4": {
-      "Evaneos\\REST\\": "app"
+      "Evaneos\\REST\\": "app",
+      "Evaneos\\MyAppName\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "spec\\Evaneos\\REST\\": "spec"
+      "spec\\Evaneos\\REST\\": "spec",
+      "Evaneos\\REST\\Tests\\": "tests"
     }
   },
   "scripts": {

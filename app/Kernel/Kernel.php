@@ -6,12 +6,14 @@ use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Cache\ApcuCache;
+use Doctrine\Common\Cache\PhpFileCache;
 use Evaneos\REST\ServiceProviders\ConfigServiceProvider;
 use Igorw\Silex\YamlConfigDriver;
 use Silex\Application;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\MonologServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
+use Symfony\Component\Validator\Mapping\Cache\DoctrineCache;
 use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 
@@ -47,15 +49,23 @@ class Kernel implements KernelInterface
         $this->env = $env;
         $this->debug = $debug;
         $this->booted = false;
-        $this->rootDir = __DIR__ . '/../..';
+        $this->rootDir = $this->getRootDir();
 
         $this->app = new Application(array(
-            'root_dir' => $this->rootDir,
+            'root_dir' => $this->getRootDir(),
             'cache_dir' => $this->getCacheDir(),
             'log_dir' => $this->getLogDir(),
             'env' => $env,
             'debug' => $debug
         ));
+    }
+
+    /**
+     * @return string
+     */
+    public function getRootDir()
+    {
+        return __DIR__ . '/../..';
     }
 
     /**
@@ -74,7 +84,10 @@ class Kernel implements KernelInterface
         return $this->debug;
     }
 
-    protected function getLogDir()
+    /**
+     * @return string
+     */
+    public function getLogDir()
     {
         if(false === $dir = getenv('SILEX_SKT_LOG_DIR')){
             $dir = '/log';
@@ -83,7 +96,10 @@ class Kernel implements KernelInterface
         return $this->rootDir.$dir;
     }
 
-    protected function getCacheDir()
+    /**
+     * @return string
+     */
+    public function getCacheDir()
     {
         if(false === $dir = getenv('SILEX_SKT_CACHE_DIR')){
             $dir = '/cache';
@@ -120,7 +136,7 @@ class Kernel implements KernelInterface
         $this->app->register(new ConfigServiceProvider($filename, array(), new YamlConfigDriver()));
 
         if(true === $this->debug){
-            foreach(array($this->app['cache_dir'], $this->app['log_dir']) as $dir){
+            foreach(array($this->getLogDir(), $this->getCacheDir()) as $dir){
                 if(!file_exists($dir)){
                     mkdir($dir, 0777);
                 }
@@ -157,8 +173,10 @@ class Kernel implements KernelInterface
             $reader = new AnnotationReader();
             $loader = new AnnotationLoader($reader);
 
-            //@TODO improve this
-            $cache = extension_loaded('apc') ? new ApcuCache() : null;
+            $cache = extension_loaded('apc')
+                ? new DoctrineCache(new ApcuCache())
+                : new DoctrineCache(new PhpFileCache($this->getCacheDir().'/validator'))
+            ;
 
             return new LazyLoadingMetadataFactory($loader, $cache);
         });
@@ -174,7 +192,7 @@ class Kernel implements KernelInterface
         ]);
 
         $this->app->register(new DoctrineOrmServiceProvider(), [
-            'orm.proxies_dir' => $this->app['cache_dir'] . '/proxies',
+            'orm.proxies_dir' => $this->getCacheDir() . '/proxies',
             'orm.em.options' => [
                 'mappings' => [], // add your mappings
             ],
