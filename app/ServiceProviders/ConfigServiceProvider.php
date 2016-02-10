@@ -39,10 +39,10 @@ class ConfigServiceProvider implements ServiceProviderInterface
     /**
      * ConfigServiceProvider constructor.
      *
-     * @param string                 $filename
+     * @param string            $filename
      * @param array             $replacements
      * @param ConfigDriver|null $driver
-     * @param string|null $prefix
+     * @param string|null       $prefix
      */
     public function __construct($filename, array $replacements = array(), ConfigDriver $driver = null, $prefix = null)
     {
@@ -51,7 +51,7 @@ class ConfigServiceProvider implements ServiceProviderInterface
 
         if ($replacements) {
             foreach ($replacements as $key => $value) {
-                $this->replacements['%'.$key.'%'] = $value;
+                $this->replacements['%' . $key . '%'] = $value;
             }
         }
 
@@ -69,10 +69,10 @@ class ConfigServiceProvider implements ServiceProviderInterface
     public function register(Application $app)
     {
         $file = new \SplFileInfo($this->filename);
-        $cacheDir = $app['cache_dir'].'/config';
-        $cachedConfig = $cacheDir.'/'.$file->getFilename().'.cache';
+        $cacheDir = $app['cache_dir'] . '/config';
+        $cachedConfig = $cacheDir . '/' . $file->getFilename() . '.cache';
         $hash = md5(file_get_contents($this->filename));
-        
+
         /* Require warmable cache system to do that, may be in the future
         if('prod' === $app['env']) {
             $config = require $cachedConfig;
@@ -85,22 +85,22 @@ class ConfigServiceProvider implements ServiceProviderInterface
 
         $isFresh = false;
 
-        if(!file_exists($cacheDir)){
+        if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777);
         }
 
-        if(file_exists($cachedConfig)){
+        if (file_exists($cachedConfig)) {
             $config = require $cachedConfig;
 
-            if($hash === $config['hash']){
+            if ($hash === $config['hash']) {
                 $isFresh = true;
                 unset($config['hash']);
             }
         }
 
-        if(!$isFresh) {
+        if (!$isFresh) {
             $config = $this->readConfig();
-            file_put_contents($cachedConfig, '<?php return '.var_export($config + array('hash' => $hash), true).' ?>');
+            file_put_contents($cachedConfig, '<?php return ' . var_export($config + array('hash' => $hash), true) . ' ?>');
         }
 
         foreach ($config as $name => $value) {
