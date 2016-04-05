@@ -1,6 +1,8 @@
 composer.lock
 /vendor
+/config/config_*.yml
 /config/config.yml
-/cache
-.phing_targets
-.idea
+/log/
+!/log/.gitkeep
+/cache/
+!/cache/.gitkeep

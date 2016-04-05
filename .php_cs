@@ -8,10 +8,11 @@ return Symfony\CS\Config\Config::create()
         'header_comment',
         'newline_after_open_tag',
         'phpdoc_order',
+        'long_array_syntax'
        // 'short_array_syntax' depend on wich version you require
     ))
     ->finder(
         Symfony\CS\Finder\DefaultFinder::create()
-            ->in(array('src'))
+            ->in(array('src', 'app'))
     )
 ;

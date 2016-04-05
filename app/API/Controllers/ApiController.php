@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\API\Controllers;
 
 use Evaneos\REST\API\Converters\ApiResponseBuilder;
@@ -11,9 +12,9 @@ class ApiController
      * @var ApiResponseBuilder
      */
     private $responseBuilder;
-    
+
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ApiResponseBuilder $responseBuilder
      */
@@ -21,9 +22,9 @@ class ApiController
     {
         $this->responseBuilder = $responseBuilder;
     }
-    
+
     /**
-     * Route root
+     * Route root.
      *
      * @return Response
      */

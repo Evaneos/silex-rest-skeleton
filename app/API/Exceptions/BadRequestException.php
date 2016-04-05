@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\API\Exceptions;
 
 class BadRequestException extends \Exception

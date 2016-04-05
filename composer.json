@@ -25,15 +25,18 @@
     "symfony/validator": "^2.1",
     "igorw/config-service-provider": "^1.2",
     "monolog/monolog": "^1.17",
-    "symfony/yaml": "~2.1"
+    "symfony/yaml": "~2.1",
+    "incenteev/composer-parameter-handler": "~2.0",
+    "symfony/polyfill-php55": "~1.0",
+    "evaneos/jwt": "^0.1"
   },
   "require-dev": {
     "behat/behat": "^3.0",
     "phpspec/phpspec": "~2.0",
     "phpunit/phpunit": "^4.0",
-    "filp/whoops": "^1.1",
     "fabpot/php-cs-fixer": "^1.10",
-    "symfony/var-dumper": "^3.0"
+    "symfony/var-dumper": "^3.0",
+    "symfony/debug": "^3.0"
   },
   "config": {
     "bin-dir": "vendor/bin"
@@ -49,8 +52,30 @@
     }
   },
   "scripts": {
+    "post-install-cmd": [
+      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
+    ],
+    "post-update-cmd": [
+      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
+    ],
     "test": "vendor/bin/behat",
     "cs": "vendor/bin/php-cs-fixer fix",
-    "cs-test": "vendor/bin/php-cs-fixer fix --dry-run --diff"
+    "cs-test": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+    "git-setup": "bin/git.sh"
+  },
+  "extra": {
+    "incenteev-parameters": {
+      "file": "config/config_dev.yml",
+      "dist-file": "config/config.yml.tpl",
+      "parameter-key": "config",
+      "env-map": {
+        "database.host": "SILEX_SKT_DB_HOST",
+        "database.user": "SILEX_SKT_DB_USER",
+        "database.password": "SILEX_SKT_DB_PASSWORD",
+        "database.dbname": "SILEX_SKT_DB_NAME",
+        "security.jwt_secret_key": "SILEX_SKT_SECRET_KEY",
+        "security.enabled": "SILEX_SKT_SECURITY_ENABLED"
+      }
+    }
   }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Evaneos\REST\API\Resources;
 
 use Hateoas\Configuration\Annotation as Hateoas;

@@ -1,27 +1,33 @@
 <?php
+
 namespace Evaneos\REST\DoctrineAdapters;
 
-use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\Query;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
 
 class DoctrineORMMapperAdapter extends DoctrineORMAdapter
 {
+    /** @var callable */
+    protected $modifier;
+
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param QueryBuilder $query
-     * @param callable     $modifier
-     * @param bool         $fetchJoinCollection
-     * @param bool         $useOutputWalkers
+     * @param QueryBuilder|Query $query
+     * @param callable           $modifier
+     * @param bool               $fetchJoinCollection
+     * @param bool               $useOutputWalkers
      */
-    public function __construct(QueryBuilder $query, callable $modifier, $fetchJoinCollection = null, $useOutputWalkers = null)
+    public function __construct($query, callable $modifier, $fetchJoinCollection = null, $useOutputWalkers = null)
     {
         $this->modifier = $modifier;
         parent::__construct($query, $fetchJoinCollection, $useOutputWalkers);
     }
 
     /**
-     * (non-PHPdoc)
+     * (non-PHPdoc).
+     *
      * @see \Pagerfanta\Adapter\DoctrineORMAdapter::getSlice()
      */
     public function getSlice($offset, $length)

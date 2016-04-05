@@ -1,15 +1,15 @@
 <?php
+
 namespace Evaneos\REST\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SampleCommand extends Command
 {
     /**
-     * Configures the command
+     * Configures the command.
      */
     protected function configure()
     {
@@ -17,10 +17,11 @@ class SampleCommand extends Command
     }
 
     /**
-     * Code executed when command invoked
+     * Code executed when command invoked.
      *
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
      * @return void|int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
