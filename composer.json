@@ -24,7 +24,8 @@
     "hautelook/templated-uri-router": "^2.0",
     "symfony/validator": "^2.1",
     "igorw/config-service-provider": "^1.2",
-    "monolog/monolog": "^1.17"
+    "monolog/monolog": "^1.17",
+    "symfony/yaml": "~2.1"
   },
   "require-dev": {
     "behat/behat": "^3.0",
