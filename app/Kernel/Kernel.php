@@ -9,6 +9,10 @@ use Doctrine\Common\Cache\ApcuCache;
 use Evaneos\REST\Config\CacheConfigDriver;
 use Igorw\Silex\ConfigServiceProvider;
 use Igorw\Silex\YamlConfigDriver;
+use Monolog\Logger;
+use Monolog\Processor\IntrospectionProcessor;
+use Monolog\Processor\MemoryUsageProcessor;
+use Monolog\Processor\TagProcessor;
 use Silex\Application;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\MonologServiceProvider;
@@ -50,13 +54,13 @@ class Kernel implements KernelInterface
         $this->booted = false;
         $this->rootDir = __DIR__ . '/../..';
 
-        $this->app = new Application(array(
+        $this->app = new Application([
             'root_dir' => $this->rootDir,
             'cache_dir' => $this->getCacheDir(),
             'log_dir' => $this->getLogDir(),
             'env' => $env,
             'debug' => $debug,
-        ));
+        ]);
     }
 
     /**
@@ -123,7 +127,7 @@ class Kernel implements KernelInterface
         $this->app->register(new ConfigServiceProvider($filename, array(), new CacheConfigDriver(new YamlConfigDriver(), $this->app['cache_dir'])));
 
         if (true === $this->debug) {
-            foreach (array($this->app['cache_dir'], $this->app['log_dir']) as $dir) {
+            foreach ([$this->app['cache_dir'], $this->app['log_dir']] as $dir) {
                 if (!file_exists($dir)) {
                     mkdir($dir, 0777);
                 }
@@ -149,10 +153,22 @@ class Kernel implements KernelInterface
         }
 
         // Logger
-        $this->app->register(new MonologServiceProvider(), array(
+        $this->app->register(new MonologServiceProvider(), [
             'monolog.logfile' => $logFile,
             'monolog.name' => $this->app['config']['log.name'],
-        ));
+        ]);
+
+        $this->app->extend('monolog', function (Logger $logger) use ($this) {
+            $tagProcessor = new TagProcessor(['debug' => $this->debug]);
+            $introspectionProcessor = new IntrospectionProcessor(Logger::ERROR);
+            $memoryProcess = new MemoryUsageProcessor();
+
+            $logger->pushProcessor($tagProcessor);
+            $logger->pushProcessor($introspectionProcessor);
+            $logger->pushProcessor($memoryProcess);
+
+            return $logger;
+        });
 
         $this->app->register(new ValidatorServiceProvider());
         $this->app['validator.mapping.class_metadata_factory'] = $this->app->share(function ($app) {
@@ -170,22 +186,22 @@ class Kernel implements KernelInterface
             return new LazyLoadingMetadataFactory($loader, $cache);
         });
 
-        $this->app->register(new DoctrineServiceProvider(), array(
-            'db.options' => array(
+        $this->app->register(new DoctrineServiceProvider(), [
+            'db.options' => [
                 'driver' => $this->app['config']['database.driver'],
                 'host' => $this->app['config']['database.host'],
                 'dbname' => $this->app['config']['database.dbname'],
                 'user' => $this->app['config']['database.user'],
                 'password' => $this->app['config']['database.password'],
-            ),
-        ));
+            ],
+        ]);
 
-        $this->app->register(new DoctrineOrmServiceProvider(), array(
+        $this->app->register(new DoctrineOrmServiceProvider(), [
             'orm.proxies_dir' => $this->app['cache_dir'] . '/proxies',
-            'orm.em.options' => array(
+            'orm.em.options' => [
                 'mappings' => $this->getDoctrineMapping(),
-            ),
-        ));
+            ],
+        ]);
 
         $this->registerDomainServices();
         $this->doBoot();
@@ -221,6 +237,6 @@ class Kernel implements KernelInterface
      */
     protected function registerDoctrineMapping()
     {
-        return array();
+        return [];
     }
 }

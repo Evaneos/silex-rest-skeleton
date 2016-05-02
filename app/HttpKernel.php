@@ -8,6 +8,8 @@ use Evaneos\REST\API\Exceptions\BadRequestException;
 use Evaneos\REST\Kernel\Kernel;
 use Evaneos\REST\ServiceProviders\ControllersServiceProvider;
 use Evaneos\REST\ServiceProviders\RestAPIServiceProvider;
+use Monolog\Logger;
+use Monolog\Processor\WebProcessor;
 use Silex\Application;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
@@ -21,18 +23,25 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
 {
     protected function doBoot()
     {
+        // Logging
+        $this->app->extend('monolog', function (Logger $logger) use ($this) {
+            $webProcessor = new WebProcessor();
+            $logger->pushProcessor($webProcessor);
+            return $logger;
+        });
+
         // Security
         if ($this->app['config']['security.enabled']) {
-            $this->app['security.firewalls'] = array(
-                'all' => array(
+            $this->app['security.firewalls'] = [
+                'all' => [
                     'stateless' => true,
                     'pattern' => '^.*$',
-                    'jwt' => array(
+                    'jwt' => [
                         'secret_key' => $this->app['config']['security.jwt_secret_key'],
-                        'allowed_algorithms' => array('HS256'),
-                    ),
-                ),
-            );
+                        'allowed_algorithms' => ['HS256'],
+                    ],
+                ],
+            ];
 
             $this->app->register(new SecurityServiceProvider());
             $this->app['security.voters'] = $this->app->extend('security.voters', function ($voters) {
@@ -54,7 +63,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
                     throw new \LogicException(sprintf('Failed to parse json string "%s", error: "%s"', $data, json_last_error_msg()));
                 }
 
-                $request->request->replace(is_array($data) ? $data : array());
+                $request->request->replace(is_array($data) ? $data : []);
             }
         });
 
