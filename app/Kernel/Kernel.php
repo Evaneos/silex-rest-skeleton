@@ -137,6 +137,10 @@ class Kernel implements KernelInterface
             }
         }
 
+        if (isset($this->app['config']['log.dir'])) {
+            $this->app['log_dir'] = $this->app['config']['log.dir'];
+        }
+
         //Prevent to prepend php stream
         if ('php://' !== substr($this->app['config']['log.file'], 0, 6)) {
             $logFile = $this->app['log_dir'] . '/' . $this->app['config']['log.file'];
