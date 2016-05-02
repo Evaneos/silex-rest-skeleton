@@ -28,7 +28,8 @@
     "symfony/yaml": "~2.1",
     "incenteev/composer-parameter-handler": "~2.0",
     "symfony/polyfill-php55": "~1.0",
-    "evaneos/jwt": "^0.1"
+    "evaneos/jwt": "^0.1",
+    "ramsey/uuid": "^3.4"
   },
   "require-dev": {
     "behat/behat": "^3.0",

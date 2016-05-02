@@ -9,6 +9,8 @@ use Doctrine\Common\Cache\ApcuCache;
 use Evaneos\REST\Config\CacheConfigDriver;
 use Igorw\Silex\ConfigServiceProvider;
 use Igorw\Silex\YamlConfigDriver;
+use Monolog\Formatter\JsonFormatter;
+use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\MemoryUsageProcessor;
@@ -156,22 +158,33 @@ class Kernel implements KernelInterface
         $this->app->register(new MonologServiceProvider(), [
             'monolog.logfile' => $logFile,
             'monolog.name' => $this->app['config']['log.name'],
+            ''
         ]);
 
-        $this->app->extend('monolog', function (Logger $logger) use ($this) {
-            $tagProcessor = new TagProcessor(['debug' => $this->debug]);
-            $introspectionProcessor = new IntrospectionProcessor(Logger::ERROR);
+        $this->app['monolog.processor.tag'] = $this->app->share(function () {
+            return new TagProcessor(['debug' => $this->debug]);
+        });
+
+        $this->app->extend('monolog', function (Logger $logger) {
+            $introspectionProcessor = new IntrospectionProcessor(Logger::WARNING);
             $memoryProcess = new MemoryUsageProcessor();
 
-            $logger->pushProcessor($tagProcessor);
+            $logger->pushProcessor($this->app['monolog.processor.tag']);
             $logger->pushProcessor($introspectionProcessor);
             $logger->pushProcessor($memoryProcess);
 
             return $logger;
         });
 
+        if (!$this->debug) {
+            $this->app->extend('monolog.handler', function (HandlerInterface $handler) {
+                $handler->setFormatter(new JsonFormatter());
+                return $handler;
+            });
+        }
+
         $this->app->register(new ValidatorServiceProvider());
-        $this->app['validator.mapping.class_metadata_factory'] = $this->app->share(function ($app) {
+        $this->app['validator.mapping.class_metadata_factory'] = $this->app->share(function () {
 
             foreach (spl_autoload_functions() as $fn) {
                 AnnotationRegistry::registerLoader($fn);

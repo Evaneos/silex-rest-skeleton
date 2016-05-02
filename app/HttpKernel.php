@@ -9,6 +9,7 @@ use Evaneos\REST\Kernel\Kernel;
 use Evaneos\REST\ServiceProviders\ControllersServiceProvider;
 use Evaneos\REST\ServiceProviders\RestAPIServiceProvider;
 use Monolog\Logger;
+use Monolog\Processor\TagProcessor;
 use Monolog\Processor\WebProcessor;
 use Silex\Application;
 use Silex\Provider\SecurityServiceProvider;
@@ -21,6 +22,23 @@ use Symfony\Component\HttpKernel\TerminableInterface;
 
 class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterface
 {
+    private static $header = 'X-Request-Id';
+
+    private $requestId;
+
+    /**
+     * HttpKernel constructor.
+     *
+     * @param $env
+     * @param $debug
+     * @param $requestId
+     */
+    public function __construct($env, $debug, $requestId)
+    {
+        parent::__construct($env, $debug);
+        $this->requestId = $requestId;
+    }
+
     protected function doBoot()
     {
         // Logging
@@ -28,6 +46,12 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
             $webProcessor = new WebProcessor();
             $logger->pushProcessor($webProcessor);
             return $logger;
+        });
+
+        $this->app->extend('monolog.processor.tag', function (TagProcessor $processor) {
+            $processor->addTags([
+                'request_id' => $this->requestId
+            ]);
         });
 
         // Security
@@ -87,7 +111,14 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
     {
         $this->boot();
 
-        return $this->app->handle($request);
+        if (!$request->headers->has(self::$header)) {
+            $request->headers->set(self::$header, $this->requestId);
+        }
+
+        $response = $this->app->handle($request, $type, $catch);
+        $response->headers->set(self::$header, $request->headers->get(self::$header));
+
+        return$response;
     }
 
     /**
