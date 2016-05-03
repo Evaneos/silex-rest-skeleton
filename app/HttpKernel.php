@@ -52,6 +52,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
             $processor->addTags([
                 'request_id' => $this->requestId
             ]);
+            return $processor;
         });
 
         // Security
