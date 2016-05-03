@@ -42,7 +42,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
     protected function doBoot()
     {
         // Logging
-        $this->app->extend('monolog', function (Logger $logger) use ($this) {
+        $this->app->extend('monolog', function (Logger $logger) {
             $webProcessor = new WebProcessor();
             $logger->pushProcessor($webProcessor);
             return $logger;
