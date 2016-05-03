@@ -8,6 +8,9 @@ use Evaneos\REST\API\Exceptions\BadRequestException;
 use Evaneos\REST\Kernel\Kernel;
 use Evaneos\REST\ServiceProviders\ControllersServiceProvider;
 use Evaneos\REST\ServiceProviders\RestAPIServiceProvider;
+use Monolog\Logger;
+use Monolog\Processor\TagProcessor;
+use Monolog\Processor\WebProcessor;
 use Silex\Application;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
@@ -19,20 +22,50 @@ use Symfony\Component\HttpKernel\TerminableInterface;
 
 class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterface
 {
+    private static $header = 'X-Request-Id';
+
+    private $requestId;
+
+    /**
+     * HttpKernel constructor.
+     *
+     * @param $env
+     * @param $debug
+     * @param $requestId
+     */
+    public function __construct($env, $debug, $requestId)
+    {
+        parent::__construct($env, $debug);
+        $this->requestId = $requestId;
+    }
+
     protected function doBoot()
     {
+        // Logging
+        $this->app->extend('monolog', function (Logger $logger) use ($this) {
+            $webProcessor = new WebProcessor();
+            $logger->pushProcessor($webProcessor);
+            return $logger;
+        });
+
+        $this->app->extend('monolog.processor.tag', function (TagProcessor $processor) {
+            $processor->addTags([
+                'request_id' => $this->requestId
+            ]);
+        });
+
         // Security
         if ($this->app['config']['security.enabled']) {
-            $this->app['security.firewalls'] = array(
-                'all' => array(
+            $this->app['security.firewalls'] = [
+                'all' => [
                     'stateless' => true,
                     'pattern' => '^.*$',
-                    'jwt' => array(
+                    'jwt' => [
                         'secret_key' => $this->app['config']['security.jwt_secret_key'],
-                        'allowed_algorithms' => array('HS256'),
-                    ),
-                ),
-            );
+                        'allowed_algorithms' => ['HS256'],
+                    ],
+                ],
+            ];
 
             $this->app->register(new SecurityServiceProvider());
             $this->app['security.voters'] = $this->app->extend('security.voters', function ($voters) {
@@ -54,7 +87,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
                     throw new \LogicException(sprintf('Failed to parse json string "%s", error: "%s"', $data, json_last_error_msg()));
                 }
 
-                $request->request->replace(is_array($data) ? $data : array());
+                $request->request->replace(is_array($data) ? $data : []);
             }
         });
 
@@ -78,7 +111,14 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
     {
         $this->boot();
 
-        return $this->app->handle($request);
+        if (!$request->headers->has(self::$header)) {
+            $request->headers->set(self::$header, $this->requestId);
+        }
+
+        $response = $this->app->handle($request, $type, $catch);
+        $response->headers->set(self::$header, $request->headers->get(self::$header));
+
+        return$response;
     }
 
     /**

@@ -6,6 +6,7 @@ config:
     database.host: postgres
     database.user: postgres
     database.password: postgres
+    log.dir: ''
     log.file: 'php://stdout'
     log.name: APP
     api.max_pagination_limit: 50
