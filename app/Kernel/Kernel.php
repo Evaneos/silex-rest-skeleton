@@ -6,7 +6,8 @@ use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Cache\ApcuCache;
-use Evaneos\REST\ServiceProviders\ConfigServiceProvider;
+use Evaneos\REST\Config\CacheConfigDriver;
+use Igorw\Silex\ConfigServiceProvider;
 use Igorw\Silex\YamlConfigDriver;
 use Silex\Application;
 use Silex\Provider\DoctrineServiceProvider;
@@ -119,7 +120,7 @@ class Kernel implements KernelInterface
             throw new \Exception('Unable to config file ' . $filename);
         }
 
-        $this->app->register(new ConfigServiceProvider($filename, array(), new YamlConfigDriver()));
+        $this->app->register(new ConfigServiceProvider($filename, array(), new CacheConfigDriver(new YamlConfigDriver(), $this->app['cache_dir'])));
 
         if (true === $this->debug) {
             foreach (array($this->app['cache_dir'], $this->app['log_dir']) as $dir) {
