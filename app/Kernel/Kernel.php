@@ -212,7 +212,7 @@ class Kernel implements KernelInterface
         $this->app->register(new DoctrineOrmServiceProvider(), [
             'orm.proxies_dir' => $this->app['cache_dir'] . '/proxies',
             'orm.em.options' => [
-                'mappings' => $this->getDoctrineMapping(),
+                'mappings' => $this->getDoctrineMappings(),
             ],
         ]);
 
@@ -221,12 +221,6 @@ class Kernel implements KernelInterface
 
         $this->app->boot();
         $this->booted = true;
-    }
-
-
-    protected function getDoctrineMapping()
-    {
-        // TODO add your domain services here
     }
 
     /**
@@ -246,9 +240,17 @@ class Kernel implements KernelInterface
     }
 
     /**
+     * @return void
+     */
+    protected function registerDomainServices()
+    {
+        // TODO add your domain services here
+    }
+
+    /**
      * @return array
      */
-    protected function registerDoctrineMapping()
+    protected function getDoctrineMappings()
     {
         return [];
     }
