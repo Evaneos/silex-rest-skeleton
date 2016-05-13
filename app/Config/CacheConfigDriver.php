@@ -33,7 +33,7 @@ final class CacheConfigDriver implements ConfigDriver
         $hash = md5(file_get_contents($filename));
 
         if(!file_exists($cacheDir)){
-            mkdir($cacheDir, 0750);
+            mkdir($cacheDir, 0750, true);
         }
 
         if(file_exists($cachedConfig)){
