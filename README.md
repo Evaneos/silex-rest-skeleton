@@ -1,6 +1,8 @@
 Silex REST Skeleton
 ===================
 
+[![Build Status](https://secure.travis-ci.org/Evaneos/silex-rest-skeleton.png?branch=master)](http://travis-ci.org/Evaneos/silex-rest-skeleton)
+
 You can create a new project using this skeleton by running the following command:
 **$>**`echo n | composer create-project evaneos/silex-rest-skeleton <your-project-name> -s dev`
 
