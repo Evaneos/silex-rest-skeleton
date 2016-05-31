@@ -5,6 +5,7 @@ namespace Evaneos\REST;
 use Evaneos\JWT\Providers\Silex\SecurityJWTServiceProvider;
 use Evaneos\REST\API\ControllerProviders\ApiControllerProvider;
 use Evaneos\REST\API\Exceptions\BadRequestException;
+use Evaneos\REST\API\Listeners\LogListener;
 use Evaneos\REST\Kernel\Kernel;
 use Evaneos\REST\ServiceProviders\ControllersServiceProvider;
 use Evaneos\REST\ServiceProviders\RestAPIServiceProvider;
@@ -55,6 +56,10 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
             return $processor;
         });
 
+        $this->app['monolog.listener'] = $this->app->share(function () {
+            return new LogListener($this->app['logger']);
+        });
+        
         // Security
         if ($this->app['config']['security.enabled']) {
             $this->app['security.firewalls'] = [
