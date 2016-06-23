@@ -4,8 +4,9 @@ namespace Evaneos\REST\ServiceProviders;
 
 use Evaneos\REST\Commands\SampleCommand;
 use Evaneos\REST\Commands\ServerCommand;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use Silex\Application;
-use Silex\ServiceProviderInterface;
 
 class CommandServiceProvider implements ServiceProviderInterface
 {
@@ -15,15 +16,15 @@ class CommandServiceProvider implements ServiceProviderInterface
      * This method should only be used to configure services and parameters.
      * It should not get services.
      */
-    public function register(Application $app)
+    public function register(Container $app)
     {
-        $app['command.default'] = $app->share(function () {
+        $app['command.default'] = function () {
             return new SampleCommand('command:sample');
-        });
+        };
 
-        $app['command.default'] = $app->share(function () use ($app) {
+        $app['command.default'] = function () use ($app) {
             return new ServerCommand('server:command', $app);
-        });
+        };
     }
 
     /**

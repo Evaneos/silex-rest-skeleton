@@ -9,8 +9,9 @@ use Hateoas\HateoasBuilder;
 use Hateoas\Representation\Factory\PagerfantaFactory;
 use Hateoas\UrlGenerator\CallableUrlGenerator;
 use Hautelook\TemplatedUriRouter\Routing\Generator\Rfc6570Generator;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use Silex\Application;
-use Silex\ServiceProviderInterface;
 
 class RestAPIServiceProvider implements ServiceProviderInterface
 {
@@ -20,28 +21,28 @@ class RestAPIServiceProvider implements ServiceProviderInterface
      * This method should only be used to configure services and parameters.
      * It should not get services.
      *
-     * @param Application $app
+     * @param Container $app
      */
-    public function register(Application $app)
+    public function register(Container $app)
     {
         AnnotationRegistry::registerLoader('class_exists');
 
-        $app['pagerFantaFactory'] = $app->share(function () {
+        $app['pagerFantaFactory'] = function () {
             return new PagerfantaFactory();
-        });
+        };
 
-        $app['templated_url_generator'] = $app->share(function () use ($app) {
+        $app['templated_url_generator'] = function () use ($app) {
             return new Rfc6570Generator($app['routes'], $app['request_context']);
-        });
+        };
 
-        $app['api.converters.pagination'] = $app->share(function () use ($app) {
+        $app['api.converters.pagination'] = function () use ($app) {
             return new PaginationConverter(
                 $app['config']['api.default_pagination_limit'],
                 $app['config']['api.max_pagination_limit']
             );
-        });
+        };
 
-        $app['api.response.builder'] = $app->share(function () use ($app) {
+        $app['api.response.builder'] = function () use ($app) {
             $hateoas = HateoasBuilder::create()
                 ->setUrlGenerator(null, new CallableUrlGenerator(function ($route, array $parameters, $absolute) use ($app) {
                     return $app['url_generator']->generate($route, $parameters, $absolute);
@@ -54,19 +55,6 @@ class RestAPIServiceProvider implements ServiceProviderInterface
                 ->build();
 
             return new ApiResponseBuilder($hateoas);
-        });
-    }
-
-    /**
-     * Bootstraps the application.
-     *
-     * This method is called after all services are registered
-     * and should be used for "dynamic" configuration (whenever
-     * a service must be requested).
-     *
-     * @param Application $app
-     */
-    public function boot(Application $app)
-    {
+        };
     }
 }
