@@ -2,7 +2,7 @@
 
 namespace Evaneos\REST\Kernel;
 
-use Dflydev\Silex\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
+use Dflydev\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Cache\ApcuCache;
@@ -161,9 +161,9 @@ class Kernel implements KernelInterface
             ''
         ]);
 
-        $this->app['monolog.processor.tag'] = $this->app->share(function () {
+        $this->app['monolog.processor.tag'] = function () {
             return new TagProcessor(['debug' => $this->debug]);
-        });
+        };
 
         $this->app->extend('monolog', function (Logger $logger) {
             $introspectionProcessor = new IntrospectionProcessor(Logger::WARNING);
@@ -184,7 +184,7 @@ class Kernel implements KernelInterface
         }
 
         $this->app->register(new ValidatorServiceProvider());
-        $this->app['validator.mapping.class_metadata_factory'] = $this->app->share(function () {
+        $this->app['validator.mapping.class_metadata_factory'] = function () {
 
             foreach (spl_autoload_functions() as $fn) {
                 AnnotationRegistry::registerLoader($fn);
@@ -197,7 +197,7 @@ class Kernel implements KernelInterface
             $cache = extension_loaded('apc') ? new ApcuCache() : null;
 
             return new LazyLoadingMetadataFactory($loader, $cache);
-        });
+        };
 
         $this->app->register(new DoctrineServiceProvider(), [
             'db.options' => [

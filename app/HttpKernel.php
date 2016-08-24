@@ -2,7 +2,7 @@
 
 namespace Evaneos\REST;
 
-use Evaneos\JWT\Providers\Silex\SecurityJWTServiceProvider;
+use Evaneos\JWT\Silex\Provider\SecurityJWTServiceProvider;
 use Evaneos\REST\API\ControllerProviders\ApiControllerProvider;
 use Evaneos\REST\API\Exceptions\BadRequestException;
 use Evaneos\REST\Kernel\Kernel;
@@ -12,9 +12,9 @@ use Monolog\Logger;
 use Monolog\Processor\TagProcessor;
 use Monolog\Processor\WebProcessor;
 use Silex\Application;
+use Silex\Provider\RoutingServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
-use Silex\Provider\UrlGeneratorServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -64,6 +64,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
                     'jwt' => [
                         'secret_key' => $this->app['config']['security.jwt_secret_key'],
                         'allowed_algorithms' => ['HS256'],
+                        'retrieval_strategy' => 'chain',
                     ],
                 ],
             ];
@@ -77,7 +78,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
 
         // HTTP
         $this->app->register(new SecurityJWTServiceProvider());
-        $this->app->register(new UrlGeneratorServiceProvider());
+        $this->app->register(new RoutingServiceProvider());
         $this->app->register(new RestAPIServiceProvider());
 
         $this->app->before(function (Request $request) {
@@ -131,9 +132,6 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
         $this->app->terminate($request, $response);
     }
 
-    /**
-     * @param Application $this->app
-     */
     private function registerRoutes()
     {
         $this->app->register(new ControllersServiceProvider());

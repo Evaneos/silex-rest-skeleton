@@ -2,7 +2,7 @@
 
 namespace Evaneos\REST\Commands;
 
-use Silex\Application;
+use Pimple\Container;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,9 +21,9 @@ class ServerCommand extends Command
      * ServerCommand constructor.
      *
      * @param null|string $name
-     * @param Application $application
+     * @param Container $application
      */
-    public function __construct($name, Application $application)
+    public function __construct($name, Container $application)
     {
         parent::__construct($name);
 

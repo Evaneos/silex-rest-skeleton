@@ -4,7 +4,7 @@ namespace Evaneos\REST\API\ControllerProviders;
 
 use Silex\Application;
 use Silex\ControllerCollection;
-use Silex\ControllerProviderInterface;
+use Silex\Api\ControllerProviderInterface;
 
 class ApiControllerProvider implements ControllerProviderInterface
 {
