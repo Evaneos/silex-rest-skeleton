@@ -5,6 +5,7 @@ namespace Evaneos\REST\CLI;
 use Evaneos\REST\Kernel\Kernel;
 use Evaneos\REST\Kernel\KernelInterface;
 use Symfony\Component\Console\Application as BaseApplication;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 
 class Application extends BaseApplication
@@ -16,8 +17,9 @@ class Application extends BaseApplication
      * Application constructor.
      *
      * @param KernelInterface $kernel
+     * @param string          $commandPrefix
      */
-    public function __construct(KernelInterface $kernel)
+    public function __construct(KernelInterface $kernel, $commandPrefix = 'command')
     {
         $this->kernel = $kernel;
 
@@ -30,16 +32,19 @@ class Application extends BaseApplication
 
         $this->setDispatcher($kernel->getApp()->offsetGet('dispatcher'));
 
-        $registeredCommand = array_reduce($kernel->getApp()->keys(), function (&$res, $serviceName) {
-            if ('command.' === substr($serviceName, 0, 8)) {
+        $registeredCommand = array_reduce($kernel->getApp()->keys(), function ($res, $serviceName) use ($commandPrefix) {
+            if ($commandPrefix . '.' === substr($serviceName, 0, 8)) {
                 $res[] = $serviceName;
-
-                return $res;
             }
-        });
+            return $res;
+        }, []);
 
         foreach ($registeredCommand as $serviceName) {
-            $this->add($kernel->getApp()->offsetGet($serviceName));
+            $commandCandidate = $kernel->getApp()->offsetGet($serviceName);
+
+            if ($commandCandidate instanceof Command) {
+                $this->add($commandCandidate);
+            }
         }
     }
 
