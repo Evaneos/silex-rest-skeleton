@@ -33,7 +33,7 @@ class Application extends BaseApplication
         $this->setDispatcher($kernel->getApp()->offsetGet('dispatcher'));
 
         $registeredCommand = array_reduce($kernel->getApp()->keys(), function ($res, $serviceName) use ($commandPrefix) {
-            if ($commandPrefix . '.' === substr($serviceName, 0, 8)) {
+            if ($commandPrefix . '.' === substr($serviceName, 0, strlen($commandPrefix) + 1)) {
                 $res[] = $serviceName;
             }
             return $res;
