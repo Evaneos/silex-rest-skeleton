@@ -1,0 +1,4 @@
+name: Doctrine migrations for my application
+migrations_directory: ./doctrine_migrations
+migrations_namespace: Evaneos\DatabaseMigration
+table_name: doctrine_migrations

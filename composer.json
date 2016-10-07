@@ -29,7 +29,8 @@
     "incenteev/composer-parameter-handler": "~2.0",
     "symfony/polyfill-php55": "~1.0",
     "evaneos/silex-jwt-provider": "^2.0",
-    "ramsey/uuid": "^3.4"
+    "ramsey/uuid": "^3.4",
+    "doctrine/migrations": "^1.4"
   },
   "require-dev": {
     "behat/behat": "^3.0",
