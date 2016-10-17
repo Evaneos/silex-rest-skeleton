@@ -11,6 +11,7 @@ use Evaneos\REST\ServiceProviders\RestAPIServiceProvider;
 use Monolog\Logger;
 use Monolog\Processor\TagProcessor;
 use Monolog\Processor\WebProcessor;
+use Ramsey\Uuid\Uuid;
 use Silex\Application;
 use Silex\Provider\RoutingServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
@@ -24,21 +25,6 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
 {
     private static $header = 'X-Request-Id';
 
-    private $requestId;
-
-    /**
-     * HttpKernel constructor.
-     *
-     * @param $env
-     * @param $debug
-     * @param $requestId
-     */
-    public function __construct($env, $debug, $requestId)
-    {
-        parent::__construct($env, $debug);
-        $this->requestId = $requestId;
-    }
-
     protected function doBoot()
     {
         // Logging
@@ -50,7 +36,7 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
 
         $this->app->extend('monolog.processor.tag', function (TagProcessor $processor) {
             $processor->addTags([
-                'request_id' => $this->requestId
+                'request_id' => $this->app['request_id']
             ]);
             return $processor;
         });
@@ -111,16 +97,19 @@ class HttpKernel extends Kernel implements HttpKernelInterface, TerminableInterf
      */
     public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
-        $this->boot();
-
-        if (!$request->headers->has(self::$header)) {
-            $request->headers->set(self::$header, $this->requestId);
+        if (null === $requestId = $request->headers->get(self::$header)) {
+            $requestId = (string) Uuid::uuid4();
+            $request->headers->set(self::$header, $requestId);
         }
 
-        $response = $this->app->handle($request, $type, $catch);
-        $response->headers->set(self::$header, $request->headers->get(self::$header));
+        $this->app['request_id'] = $requestId;
 
-        return$response;
+        $this->boot();
+        $response = $this->app->handle($request, $type, $catch);
+
+        $response->headers->set(self::$header, $requestId);
+
+        return $response;
     }
 
     /**
